@@ -14,9 +14,9 @@
     </div>
     <div class="property">
       <h3>Time travel</h3>
-      <button v-on:click="undo()">Undo</button>
-      <button v-on:click="redo()">Redo</button>
-      <button v-on:click="reset()">Reset</button>
+      <button class="undo" v-on:click="undo()">Undo</button>
+      <button class="redo" v-on:click="redo()">Redo</button>
+      <button class="reset" v-on:click="reset()">Reset</button>
     </div>
   </div>
 </template>

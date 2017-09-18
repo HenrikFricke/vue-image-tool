@@ -1,5 +1,5 @@
 <template>
-  <img src="../assets/image.jpg" v-bind:style="{ filter: `sepia(${sepia}%) grayscale(${grayscale}%)`}" />
+  <img src="../assets/image.jpg" v-bind:style="{ filter: `sepia(${sepia}%) grayscale(${grayscale}%)` }" />
 </template>
 
 <script>

@@ -18,8 +18,10 @@
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
+    "avoriaz": "^4.2.0",
     "babel-core": "^6.22.1",
     "babel-eslint": "^7.1.1",
+    "babel-jest": "^21.0.2",
     "babel-loader": "^7.1.1",
     "babel-plugin-istanbul": "^4.1.1",
     "babel-plugin-transform-runtime": "^6.22.0",
@@ -49,6 +51,7 @@
     "http-proxy-middleware": "^0.17.3",
     "inject-loader": "^3.0.0",
     "jest": "^21.1.0",
+    "jest-vue-preprocessor": "^1.1.0",
     "opn": "^5.1.0",
     "optimize-css-assets-webpack-plugin": "^2.0.0",
     "ora": "^1.2.0",
@@ -73,5 +76,15 @@
     "> 1%",
     "last 2 versions",
     "not ie <= 8"
-  ]
+  ],
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "vue"
+    ],
+    "transform": {
+      "^.+\\.js$": "./node_modules/babel-jest",
+      ".*\\.(vue)$": "./node_modules/jest-vue-preprocessor"
+    }
+  }
 }
