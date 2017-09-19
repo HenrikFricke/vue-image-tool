@@ -2,15 +2,11 @@
   <div class="toolbar">
     <div class="property">
       <h3>Sepia</h3>
-      <button v-on:click="update({ property: 'sepia', value: 0})">0%</button>
-      <button v-on:click="update({ property: 'sepia', value: 50})">50%</button>
-      <button v-on:click="update({ property: 'sepia', value: 100})">100%</button>
+      <input class="sepia-range" type="range" min="0" max="100" step="1" v-model="sepia" v-on:mouseup="storePreview" />
     </div>
     <div class="property">
       <h3>Grayscale</h3>
-      <button v-on:click="update({ property: 'grayscale', value: 0})">0%</button>
-      <button v-on:click="update({ property: 'grayscale', value: 50})">50%</button>
-      <button v-on:click="update({ property: 'grayscale', value: 100})">100%</button>
+      <input class="grayscale-range" type="range" min="0" max="100" step="1" v-model="grayscale" v-on:mouseup="storePreview" />
     </div>
     <div class="property">
       <h3>Time travel</h3>
@@ -26,8 +22,26 @@ import { mapActions, mapGetters } from 'vuex';
 
 export default {
   name: 'toolbar',
-  computed: mapGetters(['hasHistory', 'hasUndoneFilter']),
-  methods: mapActions(['update', 'undo', 'redo', 'reset']),
+  computed: {
+    ...mapGetters(['hasHistory', 'hasUndoneFilter']),
+    sepia: {
+      get() {
+        return this.$store.getters.sepia;
+      },
+      set(value) {
+        this.$store.dispatch('preview', { property: 'sepia', value });
+      },
+    },
+    grayscale: {
+      get() {
+        return this.$store.getters.grayscale;
+      },
+      set(value) {
+        this.$store.dispatch('preview', { property: 'grayscale', value });
+      },
+    },
+  },
+  methods: mapActions(['undo', 'redo', 'reset', 'storePreview']),
 };
 </script>
 
