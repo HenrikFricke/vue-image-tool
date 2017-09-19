@@ -1,4 +1,4 @@
-import { update, undo, redo, reset } from '../../../src/store/mutations';
+import { preview, update, undo, redo, reset, storePreview } from '../../../src/store/mutations';
 import { initialState } from '../../../src/store/state';
 
 describe('Mutations', () => {
@@ -6,6 +6,33 @@ describe('Mutations', () => {
 
   beforeEach(() => {
     state = initialState();
+  });
+
+  describe('Preview', () => {
+    it('should add changes to preview', () => {
+      preview(state, {
+        property: 'sepia',
+        value: 100,
+      });
+      const lastFilter = state.filter[state.filter.length - 1];
+      const previewFilter = {
+        ...lastFilter,
+        sepia: 100,
+      };
+
+      expect(state.preview).toEqual(previewFilter);
+    });
+
+    it('should clean up redo array', () => {
+      state.redo.push({});
+
+      preview(state, {
+        property: 'sepia',
+        value: 100,
+      });
+
+      expect(state.redo.length).toBe(0);
+    });
   });
 
   describe('Update', () => {
@@ -79,6 +106,21 @@ describe('Mutations', () => {
       reset(state);
 
       expect(state).toEqual(initialState());
+    });
+  });
+
+  describe('StorePreview', () => {
+    it('should reset state to initial state', () => {
+      const previewFilter = {
+        sepia: 20,
+      };
+
+      state.preview = previewFilter;
+
+      storePreview(state);
+
+      expect(state.preview).toBeNull();
+      expect(state.filter[state.filter.length - 1]).toEqual(previewFilter);
     });
   });
 });

@@ -7,6 +7,7 @@ export function initialState() {
       },
     ],
     redo: [],
+    preview: null,
   };
 }
 

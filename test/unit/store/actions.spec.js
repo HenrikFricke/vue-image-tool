@@ -8,6 +8,17 @@ describe('Actions', () => {
     commitSpy = jest.fn();
   });
 
+  describe('Preview', () => {
+    it('should commit preview mutation', () => {
+      const payload = {
+        property: 'value',
+      };
+
+      actions.preview({ commit: commitSpy }, payload);
+      expect(commitSpy).toHaveBeenCalledWith(types.PREVIEW, payload);
+    });
+  });
+
   describe('Update', () => {
     it('should commit update mutation', () => {
       const payload = {
@@ -37,6 +48,13 @@ describe('Actions', () => {
     it('should commit reset mutation', () => {
       actions.reset({ commit: commitSpy });
       expect(commitSpy).toHaveBeenCalledWith(types.RESET);
+    });
+  });
+
+  describe('StorePreview', () => {
+    it('should commit store preview mutation', () => {
+      actions.storePreview({ commit: commitSpy });
+      expect(commitSpy).toHaveBeenCalledWith(types.STORE_PREVIEW);
     });
   });
 });
