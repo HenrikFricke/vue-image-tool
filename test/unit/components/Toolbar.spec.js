@@ -78,10 +78,32 @@ describe('Toolbar', () => {
   });
 
   describe('reset button', () => {
+    let resetButton;
+
+    beforeEach(() => {
+      resetButton = component.find('button.reset')[0];
+    });
+
     it('should call reset action', () => {
-      component.find('button.reset')[0].trigger('click');
+      resetButton.trigger('click');
 
       expect(reset).toHaveBeenCalled();
+    });
+
+    describe('no history given in filter array', () => {
+      it('should be disabled', () => {
+        hasHistory.mockImplementationOnce(() => false);
+        component = getComponent(store);
+        resetButton = component.find('button.reset')[0];
+
+        expect(resetButton.element.getAttribute('disabled')).toEqual('disabled');
+      });
+    });
+
+    describe('history given in filter array', () => {
+      it('should not be disabled', () => {
+        expect(resetButton.element.getAttribute('disabled')).toBeNull();
+      });
     });
   });
 });

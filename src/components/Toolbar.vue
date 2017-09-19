@@ -16,7 +16,7 @@
       <h3>Time travel</h3>
       <button class="undo" v-on:click="undo()" v-bind:disabled="!hasHistory">Undo</button>
       <button class="redo" v-on:click="redo()">Redo</button>
-      <button class="reset" v-on:click="reset()">Reset</button>
+      <button class="reset" v-on:click="reset()" v-bind:disabled="!hasHistory">Reset</button>
     </div>
   </div>
 </template>
