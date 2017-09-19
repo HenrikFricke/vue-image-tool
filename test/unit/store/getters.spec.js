@@ -25,6 +25,22 @@ describe('Getters', () => {
     });
   });
 
+  describe('hasUndoneFilter', () => {
+    describe('more than one element in redo array given', () => {
+      it('should return true', () => {
+        state.redo.push({});
+
+        expect(getters.hasUndoneFilter(state)).toBeTruthy();
+      });
+    });
+
+    describe('has nothing in redo array', () => {
+      it('should return false', () => {
+        expect(getters.hasUndoneFilter(state)).toBeFalsy();
+      });
+    });
+  });
+
   describe('sepia', () => {
     it('should return sepia value of last filter', () => {
       expect(getters.sepia(state)).toEqual(state.filter[0].sepia);
