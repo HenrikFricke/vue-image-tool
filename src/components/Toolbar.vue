@@ -15,7 +15,7 @@
     <div class="property">
       <h3>Time travel</h3>
       <button class="undo" v-on:click="undo()" v-bind:disabled="!hasHistory">Undo</button>
-      <button class="redo" v-on:click="redo()">Redo</button>
+      <button class="redo" v-on:click="redo()" v-bind:disabled="!hasUndoneFilter">Redo</button>
       <button class="reset" v-on:click="reset()" v-bind:disabled="!hasHistory">Reset</button>
     </div>
   </div>
@@ -26,7 +26,7 @@ import { mapActions, mapGetters } from 'vuex';
 
 export default {
   name: 'toolbar',
-  computed: mapGetters(['hasHistory']),
+  computed: mapGetters(['hasHistory', 'hasUndoneFilter']),
   methods: mapActions(['update', 'undo', 'redo', 'reset']),
 };
 </script>

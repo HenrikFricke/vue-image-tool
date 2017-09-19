@@ -14,6 +14,7 @@ function getComponent(store) {
 describe('Toolbar', () => {
   let component;
   let hasHistory;
+  let hasUndoneFilter;
   let undo;
   let redo;
   let reset;
@@ -24,6 +25,7 @@ describe('Toolbar', () => {
     redo = jest.fn();
     reset = jest.fn();
     hasHistory = jest.fn(() => true);
+    hasUndoneFilter = jest.fn(() => true);
 
     store = {
       actions: {
@@ -33,6 +35,7 @@ describe('Toolbar', () => {
       },
       getters: {
         hasHistory,
+        hasUndoneFilter,
       },
     };
 
@@ -70,10 +73,32 @@ describe('Toolbar', () => {
   });
 
   describe('redo button', () => {
+    let redoButton;
+
+    beforeEach(() => {
+      redoButton = component.find('button.redo')[0];
+    });
+
     it('should call redo action', () => {
-      component.find('button.redo')[0].trigger('click');
+      redoButton.trigger('click');
 
       expect(redo).toHaveBeenCalled();
+    });
+
+    describe('no undone filter given', () => {
+      it('should be disabled', () => {
+        hasUndoneFilter.mockImplementationOnce(() => false);
+        component = getComponent(store);
+        redoButton = component.find('button.redo')[0];
+
+        expect(redoButton.element.getAttribute('disabled')).toEqual('disabled');
+      });
+    });
+
+    describe('undone filter given', () => {
+      it('should not be disabled', () => {
+        expect(redoButton.element.getAttribute('disabled')).toBeNull();
+      });
     });
   });
 
