@@ -4,6 +4,14 @@ import { initialState } from './state';
 
 import * as types from './mutation-types';
 
+export function preview(state, payload) {
+  Vue.set(state, 'redo', []);
+  state.preview = {
+    ...state.filter[state.filter.length - 1],
+    [payload.property]: payload.value,
+  };
+}
+
 export function update(state, payload) {
   state.filter.push({
     ...state.filter[state.filter.length - 1],
@@ -33,9 +41,16 @@ export function reset(state) {
   });
 }
 
+export function storePreview(state) {
+  state.filter.push(state.preview);
+  Vue.set(state, 'preview', null);
+}
+
 export default {
+  [types.PREVIEW]: preview,
   [types.UPDATE]: update,
   [types.UNDO]: undo,
   [types.REDO]: redo,
   [types.RESET]: reset,
+  [types.STORE_PREVIEW]: storePreview,
 };

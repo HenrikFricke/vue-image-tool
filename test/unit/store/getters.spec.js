@@ -41,15 +41,21 @@ describe('Getters', () => {
     });
   });
 
-  describe('sepia', () => {
-    it('should return sepia value of last filter', () => {
-      expect(getters.sepia(state)).toEqual(state.filter[0].sepia);
+  describe('imageFilter', () => {
+    describe('no preview given', () => {
+      it('should return sepia value of last filter', () => {
+        expect(getters.imageFilter(state, 'sepia')).toEqual(state.filter[0].sepia);
+      });
     });
-  });
 
-  describe('grayscale', () => {
-    it('should return grayscale value of last filter', () => {
-      expect(getters.sepia(state)).toEqual(state.filter[0].grayscale);
+    describe('preview given', () => {
+      it('should return sepia value of preview', () => {
+        state.preview = {
+          sepia: 50,
+        };
+
+        expect(getters.imageFilter(state, 'sepia')).toEqual(state.preview.sepia);
+      });
     });
   });
 });
