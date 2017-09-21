@@ -58,4 +58,10 @@ describe('Getters', () => {
       });
     });
   });
+
+  describe('imageSource', () => {
+    it('should return image source', () => {
+      expect(getters.imageSource(state)).toEqual(state.imageSource);
+    });
+  });
 });

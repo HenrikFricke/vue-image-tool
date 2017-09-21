@@ -14,6 +14,10 @@ export function imageFilter(state, type) {
   return state.filter[state.filter.length - 1][type];
 }
 
+export function imageSource(state) {
+  return state.imageSource;
+}
+
 export function sepia(state) {
   return imageFilter(state, 'sepia');
 }

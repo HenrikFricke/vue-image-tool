@@ -11,15 +11,18 @@ describe('ImagePreview', () => {
   let component;
   let grayscale;
   let sepia;
+  let imageSource;
 
   beforeEach(() => {
     grayscale = 10;
     sepia = 20;
+    imageSource = 'static/image.jpg';
 
     const store = new Vuex.Store({
       getters: {
         sepia: () => sepia,
         grayscale: () => grayscale,
+        imageSource: () => imageSource,
       },
     });
     component = mount(ImagePreview, { globals: { $store: store } });
@@ -35,9 +38,13 @@ describe('ImagePreview', () => {
     });
   });
 
-  describe('element', () => {
+  describe('image', () => {
     it('should return an image element', () => {
       expect(component.is('img')).toBeTruthy();
+    });
+
+    it('should have an `src` attribute', () => {
+      expect(component.getAttribute('src')).toEqual(imageSource);
     });
   });
 });

@@ -1,5 +1,5 @@
 <template>
-  <img src="../assets/image.jpg" v-bind:style="{ filter: `sepia(${sepia}%) grayscale(${grayscale}%)` }" />
+  <img v-bind:src="imageSource" v-bind:style="{ filter: `sepia(${sepia}%) grayscale(${grayscale}%)` }" />
 </template>
 
 <script>
@@ -8,7 +8,7 @@ import { mapGetters } from 'vuex';
 export default {
   name: 'image-preview',
   computed: {
-    ...mapGetters(['sepia', 'grayscale']),
+    ...mapGetters(['sepia', 'grayscale', 'imageSource']),
   },
 };
 </script>
