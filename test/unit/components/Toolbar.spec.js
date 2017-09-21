@@ -25,15 +25,15 @@ describe('Toolbar', () => {
   let storePreview;
 
   beforeEach(() => {
-    grayscale = jest.fn(() => 30);
-    undo = jest.fn();
-    redo = jest.fn();
-    reset = jest.fn();
-    sepia = jest.fn(() => 50);
-    preview = jest.fn();
-    hasHistory = jest.fn(() => true);
-    hasUndoneFilter = jest.fn(() => true);
-    storePreview = jest.fn();
+    grayscale = () => 30;
+    undo = jasmine.createSpy('undo');
+    redo = jasmine.createSpy('redo');
+    reset = jasmine.createSpy('reset');
+    sepia = () => 50;
+    preview = jasmine.createSpy('preview');
+    hasHistory = () => true;
+    hasUndoneFilter = () => true;
+    storePreview = jasmine.createSpy('storePreview');
 
     store = {
       actions: {
@@ -64,7 +64,7 @@ describe('Toolbar', () => {
     it('should call preview on change', () => {
       const grayscaleRange = component.find('.grayscale-range')[0];
       grayscaleRange.trigger('input');
-      const payload = preview.mock.calls[0][1];
+      const payload = preview.calls.mostRecent().args[1];
 
       expect(payload).toEqual({
         property: 'grayscale',
@@ -90,7 +90,7 @@ describe('Toolbar', () => {
     it('should call preview on change', () => {
       const sepiaRange = component.find('.sepia-range')[0];
       sepiaRange.trigger('input');
-      const payload = preview.mock.calls[0][1];
+      const payload = preview.calls.mostRecent().args[1];
 
       expect(payload).toEqual({
         property: 'sepia',
@@ -129,7 +129,7 @@ describe('Toolbar', () => {
 
     describe('no history given in filter array', () => {
       it('should be disabled', () => {
-        hasHistory.mockImplementationOnce(() => false);
+        store.getters.hasHistory = jasmine.createSpy('hasHistory').and.returnValue(false);
         component = getComponent(store);
         undoButton = component.find('button.undo')[0];
 
@@ -159,7 +159,7 @@ describe('Toolbar', () => {
 
     describe('no undone filter given', () => {
       it('should be disabled', () => {
-        hasUndoneFilter.mockImplementationOnce(() => false);
+        store.getters.hasUndoneFilter = () => false;
         component = getComponent(store);
         redoButton = component.find('button.redo')[0];
 
@@ -189,7 +189,7 @@ describe('Toolbar', () => {
 
     describe('no history given in filter array', () => {
       it('should be disabled', () => {
-        hasHistory.mockImplementationOnce(() => false);
+        store.getters.hasHistory = () => false;
         component = getComponent(store);
         resetButton = component.find('button.reset')[0];
 
