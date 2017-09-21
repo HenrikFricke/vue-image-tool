@@ -2,7 +2,7 @@
   <div>
     <img v-bind:src="imageSource" v-on:load="drawCanvas" />
     <canvas />
-    <a v-on:click="saveImage" download="image.jpg">Save</a>
+    <a id="save" v-on:click="saveImage" download="image.jpg">Save</a>
   </div>
 </template>
 
