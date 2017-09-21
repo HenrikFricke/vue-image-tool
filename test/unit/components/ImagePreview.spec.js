@@ -12,6 +12,7 @@ describe('ImagePreview', () => {
   let grayscale;
   let sepia;
   let imageSource;
+  let image;
 
   beforeEach(() => {
     grayscale = 10;
@@ -26,25 +27,12 @@ describe('ImagePreview', () => {
       },
     });
     component = mount(ImagePreview, { globals: { $store: store } });
-  });
-
-  describe('computed', () => {
-    it('should have sepia value', () => {
-      expect(component.vm.sepia).toEqual(sepia);
-    });
-
-    it('should have grayscale value', () => {
-      expect(component.vm.grayscale).toEqual(grayscale);
-    });
+    image = component.find('img')[0];
   });
 
   describe('image', () => {
-    it('should return an image element', () => {
-      expect(component.is('img')).toBeTruthy();
-    });
-
     it('should have an `src` attribute', () => {
-      expect(component.getAttribute('src')).toEqual(imageSource);
+      expect(image.getAttribute('src')).toEqual(imageSource);
     });
   });
 });
