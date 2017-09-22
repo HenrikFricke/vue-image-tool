@@ -30,6 +30,17 @@ describe('Actions', () => {
     });
   });
 
+  describe('UpdateImageSource', () => {
+    it('should commit update mutation', () => {
+      const payload = {
+        imageSource: 'path/to/image',
+      };
+
+      actions.updateImageSource({ commit: commitSpy }, payload);
+      expect(commitSpy).toHaveBeenCalledWith(types.UPDATE_IMAGE_SOURCE, payload);
+    });
+  });
+
   describe('Redo', () => {
     it('should commit redo mutation', () => {
       actions.redo({ commit: commitSpy });
