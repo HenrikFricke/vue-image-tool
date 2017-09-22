@@ -1,12 +1,8 @@
 <template>
   <div class="toolbar">
-    <div class="property">
-      <h3>Sepia</h3>
-      <input class="sepia-range" type="range" min="0" max="100" step="1" v-model="sepia" v-on:mouseup="storePreview" />
-    </div>
-    <div class="property">
-      <h3>Grayscale</h3>
-      <input class="grayscale-range" type="range" min="0" max="100" step="1" v-model="grayscale" v-on:mouseup="storePreview" />
+    <div class="property image-tool" v-for="imageTool in imageTools" v-bind:key="imageTool.ID">
+      <h3>{{imageTool.LABEL}}</h3>
+      <input v-bind:value="imageTool.value" v-on:input="handleInput" v-bind:data-tool="imageTool.ID" type="range" v-bind:min="imageTool.MIN_VALUE" v-bind:max="imageTool.MAX_VALUE" v-bind:step="imageTool.STEP" v-on:change="storePreview" />
     </div>
     <div class="property">
       <h3>Time travel</h3>
@@ -23,25 +19,17 @@ import { mapActions, mapGetters } from 'vuex';
 export default {
   name: 'toolbar',
   computed: {
-    ...mapGetters(['hasHistory', 'hasUndoneFilter']),
-    sepia: {
-      get() {
-        return this.$store.getters.sepia;
-      },
-      set(value) {
-        this.$store.dispatch('preview', { property: 'sepia', value });
-      },
-    },
-    grayscale: {
-      get() {
-        return this.$store.getters.grayscale;
-      },
-      set(value) {
-        this.$store.dispatch('preview', { property: 'grayscale', value });
-      },
+    ...mapGetters(['hasHistory', 'hasUndoneFilter', 'imageTools']),
+  },
+  methods: {
+    ...mapActions(['undo', 'redo', 'reset', 'storePreview']),
+    handleInput(e) {
+      this.$store.dispatch('preview', {
+        id: e.target.dataset.tool,
+        value: e.target.value,
+      });
     },
   },
-  methods: mapActions(['undo', 'redo', 'reset', 'storePreview']),
 };
 </script>
 

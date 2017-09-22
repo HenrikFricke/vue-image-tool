@@ -7,33 +7,57 @@ import Toolbar from '../../../src/components/Toolbar';
 
 Vue.use(Vuex);
 
-function getComponent(store) {
-  return mount(Toolbar, { globals: { $store: new Vuex.Store(store) } });
+function getComponent(store, dispatch) {
+  const vuexStore = new Vuex.Store(store);
+
+  if (dispatch) {
+    vuexStore.dispatch = dispatch;
+  }
+
+  return mount(Toolbar, { globals: { $store: vuexStore } });
 }
 
 describe('Toolbar', () => {
   let component;
-  let grayscale;
   let hasHistory;
   let hasUndoneFilter;
   let undo;
   let redo;
   let reset;
   let store;
-  let sepia;
   let preview;
   let storePreview;
+  let imageTools;
 
   beforeEach(() => {
-    grayscale = () => 30;
     undo = jasmine.createSpy('undo');
     redo = jasmine.createSpy('redo');
     reset = jasmine.createSpy('reset');
-    sepia = () => 50;
     preview = jasmine.createSpy('preview');
     hasHistory = () => true;
     hasUndoneFilter = () => true;
     storePreview = jasmine.createSpy('storePreview');
+
+    imageTools = [
+      {
+        ID: 'tool-one',
+        MIN_VALUE: 0,
+        MAX_VALUE: 100,
+        LABEL: 'Tool One',
+        STEP: 1,
+        DEFAULT_VALUE: 1,
+        value: 10,
+      },
+      {
+        ID: 'tool-two',
+        MIN_VALUE: 0,
+        MAX_VALUE: 100,
+        LABEL: 'Tool Two',
+        STEP: 1,
+        DEFAULT_VALUE: 1,
+        value: 20,
+      },
+    ];
 
     store = {
       actions: {
@@ -44,8 +68,7 @@ describe('Toolbar', () => {
         storePreview,
       },
       getters: {
-        grayscale,
-        sepia,
+        imageTools: () => imageTools,
         hasHistory,
         hasUndoneFilter,
       },
@@ -54,63 +77,39 @@ describe('Toolbar', () => {
     component = getComponent(store);
   });
 
-  describe('grayscale input range', () => {
-    it('should have proper value attribute', () => {
-      const grayscaleRange = component.find('.grayscale-range')[0];
+  describe('image tools', () => {
+    it('should be two present', () => {
+      const imageToolsComponents = component.find('.image-tool');
 
-      expect(grayscaleRange.element.value).toBe('30');
+      expect(imageToolsComponents.length).toBe(2);
     });
 
-    it('should call preview on change', () => {
-      const grayscaleRange = component.find('.grayscale-range')[0];
-      grayscaleRange.trigger('input');
-      const payload = preview.calls.mostRecent().args[1];
+    it('should render input field with proper attributes', () => {
+      const input = component.find('.image-tool > input')[0];
 
-      expect(payload).toEqual({
-        property: 'grayscale',
-        value: '30',
+      expect(input.element.value).toEqual(imageTools[0].value.toString());
+      expect(input.element.getAttribute('min')).toEqual(imageTools[0].MIN_VALUE.toString());
+      expect(input.element.getAttribute('max')).toEqual(imageTools[0].MAX_VALUE.toString());
+      expect(input.element.getAttribute('step')).toEqual(imageTools[0].STEP.toString());
+      expect(input.element.dataset.tool).toEqual(imageTools[0].ID.toString());
+    });
+
+    it('should render label', () => {
+      const label = component.find('.image-tool > h3')[0];
+
+      expect(label.text()).toEqual(imageTools[0].LABEL);
+    });
+
+    it('should handle input events', () => {
+      const dispatch = jasmine.createSpy('dispatch');
+      component = getComponent(store, dispatch);
+      const input = component.find('.image-tool > input')[0];
+      input.trigger('input');
+
+      expect(dispatch).toHaveBeenCalledWith('preview', {
+        id: imageTools[0].ID,
+        value: imageTools[0].value.toString(),
       });
-    });
-
-    it('should call storePreview on mouseup', () => {
-      const grayscaleRange = component.find('.grayscale-range')[0];
-      grayscaleRange.trigger('mouseup');
-
-      expect(storePreview).toHaveBeenCalled();
-    });
-  });
-
-  describe('sepia input range', () => {
-    it('should have proper value attribute', () => {
-      const sepiaRange = component.find('.sepia-range')[0];
-
-      expect(sepiaRange.element.value).toBe('50');
-    });
-
-    it('should call preview on change', () => {
-      const sepiaRange = component.find('.sepia-range')[0];
-      sepiaRange.trigger('input');
-      const payload = preview.calls.mostRecent().args[1];
-
-      expect(payload).toEqual({
-        property: 'sepia',
-        value: '50',
-      });
-    });
-
-    it('should call storePreview on mouseup', () => {
-      const sepiaRange = component.find('.sepia-range')[0];
-      sepiaRange.trigger('mouseup');
-
-      expect(storePreview).toHaveBeenCalled();
-    });
-  });
-
-  describe('grayscale input range', () => {
-    it('should have proper value attribute', () => {
-      const grayscaleRange = component.find('.grayscale-range')[0];
-
-      expect(grayscaleRange.element.value).toBe('30');
     });
   });
 
