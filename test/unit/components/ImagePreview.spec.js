@@ -10,6 +10,7 @@ Vue.use(Vuex);
 describe('ImagePreview', () => {
   let canvas;
   let dispatch;
+  let dropArea;
   let component;
   let image;
   let store;
@@ -30,6 +31,7 @@ describe('ImagePreview', () => {
     image = component.find('img')[0];
     canvas = component.find('canvas')[0];
     saveButton = component.find('a#save')[0];
+    dropArea = component.find('.droparea')[0];
   });
 
   describe('template', () => {
@@ -90,6 +92,26 @@ describe('ImagePreview', () => {
         expect(uploadImage).toHaveBeenCalled();
       });
     });
+
+    describe('drop area', () => {
+      it('should have listener for ondrop', () => {
+        const dropImage = jasmine.createSpy('dropImage');
+        component.setMethods({ dropImage });
+
+        dropArea.trigger('drop');
+
+        expect(dropImage).toHaveBeenCalled();
+      });
+
+      it('should have listener for ondragover', () => {
+        const dragover = jasmine.createSpy('dropImage');
+        component.setMethods({ dragover });
+
+        dropArea.trigger('dragover');
+
+        expect(dragover).toHaveBeenCalled();
+      });
+    });
   });
 
   describe('methods', () => {
@@ -109,24 +131,8 @@ describe('ImagePreview', () => {
       });
     });
 
-    describe('uploadImage', () => {
-      it('should decline invalid files', () => {
-        const event = {
-          target: {
-            files: [
-              {
-                type: 'image/gif',
-              },
-            ],
-          },
-        };
-
-        component.vm.uploadImage(event);
-
-        expect(dispatch).not.toHaveBeenCalled();
-      });
-
-      it('should dispatch base 64 encoded image', () => {
+    describe('handleInputChange', () => {
+      it('should call uploadImage method with file', () => {
         const event = {
           target: {
             files: [
@@ -137,6 +143,73 @@ describe('ImagePreview', () => {
           },
         };
 
+        const uploadImage = jasmine.createSpy('uploadImage');
+        component.setMethods({ uploadImage });
+        component.vm.handleInputChange(event);
+
+        expect(uploadImage).toHaveBeenCalledWith(event.target.files[0]);
+      });
+    });
+
+    describe('dragover', () => {
+      it('should just call preventDefault', () => {
+        const event = {
+          preventDefault: jasmine.createSpy('preventDefault'),
+        };
+
+        component.vm.dragover(event);
+
+        expect(event.preventDefault).toHaveBeenCalled();
+      });
+    });
+
+    describe('dropImage', () => {
+      let event;
+
+      beforeEach(() => {
+        event = {
+          dataTransfer: {
+            files: [
+              {
+                type: 'image/jpeg',
+              },
+            ],
+          },
+          preventDefault: jasmine.createSpy('preventDefault'),
+        };
+      });
+
+      it('should call uploadImage method with file', () => {
+        const uploadImage = jasmine.createSpy('uploadImage');
+        component.setMethods({ uploadImage });
+        component.vm.dropImage(event);
+
+        expect(uploadImage).toHaveBeenCalledWith(event.dataTransfer.files[0]);
+      });
+
+      it('should call preventDefault', () => {
+        component.setMethods({ uploadImage: () => null });
+        component.vm.dropImage(event);
+
+        expect(event.preventDefault).toHaveBeenCalled();
+      });
+    });
+
+    describe('uploadImage', () => {
+      it('should decline invalid files', () => {
+        const file = {
+          type: 'image/gif',
+        };
+
+        component.vm.uploadImage(file);
+        expect(dispatch).not.toHaveBeenCalled();
+      });
+
+      it('should dispatch base 64 encoded image', () => {
+        const file = {
+          type: 'image/jpeg',
+        };
+
         const fileReaderMock = {
           readAsDataURL: jasmine.createSpy('readAsDataURL'),
           addEventListener: jasmine.createSpy('addEventListener'),
@@ -145,8 +218,8 @@ describe('ImagePreview', () => {
 
         spyOn(window, 'FileReader').and.returnValue(fileReaderMock);
 
-        component.vm.uploadImage(event);
-        expect(fileReaderMock.readAsDataURL).toHaveBeenCalledWith(event.target.files[0]);
+        component.vm.uploadImage(file);
+        expect(fileReaderMock.readAsDataURL).toHaveBeenCalledWith(file);
         expect(fileReaderMock.addEventListener).toHaveBeenCalledWith('load', jasmine.any(Function));
 
         const listener = fileReaderMock.addEventListener.calls.mostRecent().args[1];
