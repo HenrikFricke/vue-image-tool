@@ -3,6 +3,7 @@
     <img v-bind:src="imageSource" v-on:load="drawCanvas" />
     <canvas />
     <a id="save" v-on:click="saveImage" download="image.jpg">Save</a>
+    <input type="file" accept=".png, .jpg, .jpeg" v-on:change="uploadImage" />
   </div>
 </template>
 
@@ -34,6 +35,22 @@ export default {
       const link = this.$el.querySelector('a');
 
       link.href = canvas.toDataURL('image/jpeg');
+    },
+    uploadImage(event) {
+      const file = event.target.files[0];
+
+      if (file.type !== 'image/jpeg' && file.type !== 'image/png') {
+        return;
+      }
+
+      const fileReader = new FileReader();
+      fileReader.addEventListener('load', () => {
+        this.$store.dispatch('updateImageSource', {
+          imageSource: fileReader.result,
+        });
+      });
+
+      fileReader.readAsDataURL(file);
     },
   },
   watch: {

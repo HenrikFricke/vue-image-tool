@@ -1,4 +1,4 @@
-import { preview, update, undo, redo, reset, storePreview } from '../../../src/store/mutations';
+import { preview, update, updateImageSource, undo, redo, reset, storePreview } from '../../../src/store/mutations';
 import { initialState } from '../../../src/store/state';
 
 describe('Mutations', () => {
@@ -57,6 +57,18 @@ describe('Mutations', () => {
     });
   });
 
+  describe('UpdateImageSource', () => {
+    it('should update image source', () => {
+      const payload = {
+        imageSource: 'path/to/image',
+      };
+
+      updateImageSource(state, payload);
+
+      expect(state.imageSource).toEqual(payload.imageSource);
+    });
+  });
+
   describe('Undo', () => {
     it('should remove last manipulation in history', () => {
       update(state, {
@@ -93,7 +105,9 @@ describe('Mutations', () => {
   });
 
   describe('Reset', () => {
-    it('should reset state to initial state', () => {
+    it('should reset time travel', () => {
+      const initState = initialState();
+
       update(state, {
         property: 'sepia',
         value: 100,
@@ -101,7 +115,9 @@ describe('Mutations', () => {
 
       reset(state);
 
-      expect(state).toEqual(initialState());
+      expect(state.history).toEqual(initState.history);
+      expect(state.redo).toEqual(initState.redo);
+      expect(state.preview).toEqual(initState.preview);
     });
   });
 

@@ -8,6 +8,10 @@ export function update({ commit }, payload) {
   commit(types.UPDATE, payload);
 }
 
+export function updateImageSource({ commit }, payload) {
+  commit(types.UPDATE_IMAGE_SOURCE, payload);
+}
+
 export function undo({ commit }) {
   commit(types.UNDO);
 }

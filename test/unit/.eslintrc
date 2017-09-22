@@ -6,5 +6,6 @@
     "expect": true,
     "sinon": true,
     "jasmine": true,
+    "spyOn": true
   }
 }

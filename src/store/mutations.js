@@ -14,6 +14,10 @@ export function update(state, payload) {
   state.redo.splice(0, state.redo.length + 1);
 }
 
+export function updateImageSource(state, payload) {
+  Vue.set(state, 'imageSource', payload.imageSource);
+}
+
 export function undo(state) {
   if (state.history.length > 0) {
     const lastManipulation = state.history.pop();
@@ -30,9 +34,10 @@ export function redo(state) {
 
 export function reset(state) {
   const initState = initialState();
-  Object.keys(state).forEach((f) => {
-    Vue.set(state, f, initState[f]);
-  });
+
+  Vue.set(state, 'history', initState.history);
+  Vue.set(state, 'redo', initState.redo);
+  Vue.set(state, 'preview', initState.preview);
 }
 
 export function storePreview(state) {
@@ -43,6 +48,7 @@ export function storePreview(state) {
 export default {
   [types.PREVIEW]: preview,
   [types.UPDATE]: update,
+  [types.UPDATE_IMAGE_SOURCE]: updateImageSource,
   [types.UNDO]: undo,
   [types.REDO]: redo,
   [types.RESET]: reset,
