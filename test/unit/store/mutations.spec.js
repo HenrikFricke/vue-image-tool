@@ -9,25 +9,21 @@ describe('Mutations', () => {
   });
 
   describe('Preview', () => {
-    it('should add changes to preview', () => {
-      preview(state, {
-        property: 'sepia',
+    it('should set manipulation as preview', () => {
+      const manipulation = {
+        id: 'sepia',
         value: 100,
-      });
-      const lastFilter = state.filter[state.filter.length - 1];
-      const previewFilter = {
-        ...lastFilter,
-        sepia: 100,
       };
 
-      expect(state.preview).toEqual(previewFilter);
+      preview(state, manipulation);
+      expect(state.preview).toEqual(manipulation);
     });
 
     it('should clean up redo array', () => {
       state.redo.push({});
 
       preview(state, {
-        property: 'sepia',
+        id: 'sepia',
         value: 100,
       });
 
@@ -36,15 +32,17 @@ describe('Mutations', () => {
   });
 
   describe('Update', () => {
-    it('should add new filter configuration to array', () => {
-      update(state, {
-        property: 'sepia',
+    it('should append manipulation to history', () => {
+      const manipulation = {
+        id: 'sepia',
         value: 100,
-      });
-      const lastFilter = state.filter[state.filter.length - 1];
+      };
 
-      expect(state.filter.length).toBe(2);
-      expect(lastFilter.sepia).toBe(100);
+      update(state, manipulation);
+      const lastManipulation = state.history[state.history.length - 1];
+
+      expect(state.history.length).toBe(1);
+      expect(lastManipulation).toEqual(manipulation);
     });
 
     it('should empty redo array', () => {
@@ -60,38 +58,36 @@ describe('Mutations', () => {
   });
 
   describe('Undo', () => {
-    it('should remove last filter and add it to the redo array', () => {
-      const initialFilter = state.filter[0];
-
+    it('should remove last manipulation in history', () => {
       update(state, {
-        property: 'sepia',
+        id: 'sepia',
         value: 100,
       });
 
-      const lastFilter = state.filter[state.filter.length - 1];
+      const secondManipulation = {
+        id: 'sepia',
+        value: 50,
+      };
+
+      update(state, secondManipulation);
 
       undo(state);
 
-      expect(state.filter[state.filter.length - 1]).toEqual(initialFilter);
-      expect(state.redo[0]).toEqual(lastFilter);
-    });
-
-    it('should do nothing with only one item in filter array', () => {
-      undo(state);
-
-      expect(state).toEqual(initialState());
+      expect(state.history.length).toBe(1);
+      expect(state.redo[0]).toEqual(secondManipulation);
     });
   });
 
   describe('Redo', () => {
-    it('should redo last filter', () => {
-      const redoFilter = {
-        sepia: 50,
+    it('should redo last manipulation', () => {
+      const manipulation = {
+        id: 'sepia',
+        vvalue: 80,
       };
-      state.redo.push(redoFilter);
+      state.redo.push(manipulation);
       redo(state);
 
-      expect(state.filter[state.filter.length - 1]).toEqual(redoFilter);
+      expect(state.history.length).toBe(1);
       expect(state.redo.length).toBe(0);
     });
   });
@@ -111,16 +107,17 @@ describe('Mutations', () => {
 
   describe('StorePreview', () => {
     it('should reset state to initial state', () => {
-      const previewFilter = {
-        sepia: 20,
+      const previewManipulation = {
+        id: 'sepia',
+        value: 20,
       };
 
-      state.preview = previewFilter;
+      state.preview = previewManipulation;
 
       storePreview(state);
 
       expect(state.preview).toBeNull();
-      expect(state.filter[state.filter.length - 1]).toEqual(previewFilter);
+      expect(state.history[state.history.length - 1]).toEqual(previewManipulation);
     });
   });
 });

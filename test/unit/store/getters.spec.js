@@ -1,6 +1,9 @@
 import * as getters from '../../../src/store/getters';
 import { initialState } from '../../../src/store/state';
 
+import imageToolsList from '../../../src/imageTools';
+import * as sepia from '../../../src/imageTools/sepia';
+
 describe('Getters', () => {
   let state;
 
@@ -9,16 +12,18 @@ describe('Getters', () => {
   });
 
   describe('hasHistory', () => {
-    describe('more than one element in filter array given', () => {
+    describe('more than one manipulation in history', () => {
       it('should return true', () => {
-        const lastFilter = state.filter[0];
-        state.filter.push(lastFilter);
+        state.history.push({
+          id: 'sepia',
+          value: 20,
+        });
 
         expect(getters.hasHistory(state)).toBeTruthy();
       });
     });
 
-    describe('initial state of filter array given', () => {
+    describe('initial state of history', () => {
       it('should return false', () => {
         expect(getters.hasHistory(state)).toBeFalsy();
       });
@@ -41,20 +46,59 @@ describe('Getters', () => {
     });
   });
 
-  describe('imageFilter', () => {
-    describe('no preview given', () => {
-      it('should return sepia value of last filter', () => {
-        expect(getters.imageFilter(state, 'sepia')).toEqual(state.filter[0].sepia);
+  describe('imageTools', () => {
+    describe('preview given', () => {
+      it('should return value of preview', () => {
+        state.preview = {
+          id: sepia.ID,
+          value: 20,
+        };
+
+        const imageTools = imageToolsList.map((tool) => {
+          if (tool.ID === sepia.ID) {
+            return {
+              ...tool,
+              value: 20,
+            };
+          }
+
+          return {
+            ...tool,
+            value: tool.DEFAULT_VALUE,
+          };
+        });
+
+        expect(getters.imageTools(state)).toEqual(imageTools);
       });
     });
 
-    describe('preview given', () => {
-      it('should return sepia value of preview', () => {
-        state.preview = {
-          sepia: 50,
-        };
+    describe('no preview given, but history given', () => {
+      it('should return value of last manipulation in history', () => {
+        state.history.push({
+          id: sepia.ID,
+          value: 20,
+        });
 
-        expect(getters.imageFilter(state, 'sepia')).toEqual(state.preview.sepia);
+        state.history.push({
+          id: sepia.ID,
+          value: 50,
+        });
+
+        const imageTools = imageToolsList.map((tool) => {
+          if (tool.ID === sepia.ID) {
+            return {
+              ...tool,
+              value: 50,
+            };
+          }
+
+          return {
+            ...tool,
+            value: tool.DEFAULT_VALUE,
+          };
+        });
+
+        expect(getters.imageTools(state)).toEqual(imageTools);
       });
     });
   });

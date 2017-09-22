@@ -12,7 +12,7 @@ import { mapGetters } from 'vuex';
 export default {
   name: 'image-preview',
   computed: {
-    ...mapGetters(['sepia', 'grayscale', 'imageSource']),
+    ...mapGetters(['imageSource', 'imageTools']),
   },
   methods: {
     drawCanvas() {
@@ -22,7 +22,11 @@ export default {
 
       ctx.canvas.width = image.width;
       ctx.canvas.height = image.height;
-      ctx.filter = `sepia(${this.sepia}%) grayscale(${this.grayscale}%)`;
+
+      this.imageTools.forEach((imageTool) => {
+        imageTool.manipulate(ctx, imageTool.value);
+      });
+
       ctx.drawImage(image, 0, 0);
     },
     saveImage() {
@@ -33,10 +37,7 @@ export default {
     },
   },
   watch: {
-    sepia() {
-      this.drawCanvas();
-    },
-    grayscale() {
+    imageTools() {
       this.drawCanvas();
     },
   },
