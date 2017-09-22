@@ -8,6 +8,7 @@ export function initialState() {
     ],
     redo: [],
     preview: null,
+    imageSource: 'static/image.jpg',
   };
 }
 

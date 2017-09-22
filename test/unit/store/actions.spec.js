@@ -5,7 +5,7 @@ describe('Actions', () => {
   let commitSpy;
 
   beforeEach(() => {
-    commitSpy = jest.fn();
+    commitSpy = jasmine.createSpy('commit');
   });
 
   describe('Preview', () => {
