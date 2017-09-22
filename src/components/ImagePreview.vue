@@ -3,7 +3,8 @@
     <img v-bind:src="imageSource" v-on:load="drawCanvas" />
     <canvas />
     <a id="save" v-on:click="saveImage" download="image.jpg">Save</a>
-    <input type="file" accept=".png, .jpg, .jpeg" v-on:change="uploadImage" />
+    <input type="file" accept=".png, .jpg, .jpeg" v-on:change="handleInputChange" />
+    <div class="droparea" v-on:drop="dropImage" v-on:dragover="dragover" />
   </div>
 </template>
 
@@ -36,9 +37,10 @@ export default {
 
       link.href = canvas.toDataURL('image/jpeg');
     },
-    uploadImage(event) {
-      const file = event.target.files[0];
-
+    handleInputChange(event) {
+      this.uploadImage(event.target.files[0]);
+    },
+    uploadImage(file) {
       if (file.type !== 'image/jpeg' && file.type !== 'image/png') {
         return;
       }
@@ -51,6 +53,13 @@ export default {
       });
 
       fileReader.readAsDataURL(file);
+    },
+    dropImage(event) {
+      this.uploadImage(event.dataTransfer.files[0]);
+      event.preventDefault();
+    },
+    dragover(event) {
+      event.preventDefault();
     },
   },
   watch: {
@@ -68,5 +77,11 @@ img {
 
 canvas {
   max-width: 600px;
+}
+
+.droparea {
+  width: 400px;
+  height: 400px;
+  border: 2px solid gray;
 }
 </style>
